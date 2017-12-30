@@ -1,0 +1,20 @@
+- model: core.accesslevel
+  pk: 1
+  fields:
+    name: Owner
+    description: This is for Owner (Supervisor) level access to Password Lists/Passwords
+- model: core.accesslevel
+  pk: 2
+  fields:
+    name: Admin
+    description: This is for Admin (Create, Read, Update, Delete) level access to Password Lists/Passwords
+- model: core.accesslevel
+  pk: 3
+  fields:
+    name: Modify
+    description: This is for Modify (Read, Update) level access to Password Lists/Passwords
+- model: core.accesslevel
+  pk: 4
+  fields:
+    name: Read
+    description: This is for View (Read) level access to Password Lists/Passwords

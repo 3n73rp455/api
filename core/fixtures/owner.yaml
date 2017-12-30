@@ -1,0 +1,10 @@
+- model: core.owner
+  pk: 1
+  fields:
+    name: Default
+    description: Default Owner for any objects in system.
+- model: core.owner
+  pk: 2
+  fields:
+    name: Personal
+    description: For any objects in the system which are personal to the user.
