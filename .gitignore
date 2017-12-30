@@ -108,10 +108,10 @@ venv.bak/
 .idea/workspace.xml
 api/__pycache__/
 core/__pycache__/
-core/migrations/__pycache__/
+core/migrations/
 core/scripts/__pycache__/
 passwordfolders/__pycache__/
-passwordfolders/migrations/__pycache__/
+passwordfolders/migrations/
 passwords/__pycache__/
-passwords/migrations/__pycache__/
+passwords/migrations/
 logs/
