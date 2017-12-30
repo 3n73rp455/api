@@ -1,0 +1,17 @@
+application:
+  debug: true
+  debug-level: 'DEBUG'
+database:
+  host: 'dvdbvm001'
+  port: 5432
+  username: 'enterpass'
+  password: '3Nt3rp@$S'
+  name: 'enterpass'
+  engine: '@engine'
+ldap:
+  uri: 'ldap://prappvmdc001.28beatty.com'
+  username: 'robin@28beatty.com'
+  password: 'Welcome2'
+secrets:
+  master-key: 'xfbcnp72vq^oor^5rbnqb2*!!*2dh%fe@x**7!2ttf91z7dg2x'
+  master-salt: 'wlrq1b^8&mpxizl&$ikci))3o@fpv7go$xbrsucn(m+p0-vxku'
