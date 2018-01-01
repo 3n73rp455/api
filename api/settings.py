@@ -125,6 +125,18 @@ DATABASES = {
     }
 }
 
+if 'test' in sys.argv or 'test_coverage' in sys.argv: #Covers regular testing and django-coverage
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'USER': 'test_user',
+            'NAME': 'test_enterpass',
+            'TEST': {
+                'NAME': 'test_enterpass.sqlite3',
+            },
+        },
+    }
+
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
@@ -194,6 +206,7 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
     ),
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
 
 REST_SESSION_LOGIN = True

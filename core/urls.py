@@ -18,10 +18,13 @@ from rest_framework import routers
 from core import views
 
 router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet)
-router.register(r'accesslevels', views.AccessLevelViewSet)
+
+router.register(r'users', views.UserViewSet, base_name='user')
+router.register(r'accesslevels', views.AccessLevelViewSet, base_name='accesslevel')
 router.register(r'owners', views.OwnerViewSet)
 router.register(r'systemsettings', views.SystemSettingViewSet)
+
+app_name='core'
 
 urlpatterns = [
     url(r'^', include(router.urls)),
