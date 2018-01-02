@@ -21,8 +21,8 @@ router = routers.DefaultRouter()
 
 router.register(r'users', views.UserViewSet, base_name='user')
 router.register(r'accesslevels', views.AccessLevelViewSet, base_name='accesslevel')
-router.register(r'owners', views.OwnerViewSet)
-router.register(r'systemsettings', views.SystemSettingViewSet)
+router.register(r'owners', views.OwnerViewSet, base_name='owner')
+router.register(r'systemsettings', views.SystemSettingViewSet, base_name='systemsetting')
 
 app_name='core'
 

@@ -24,6 +24,6 @@ urlpatterns = [
     url(r'^auth/register/', include('rest_auth.registration.urls')),
     url(r'^auth/refresh-token/', refresh_jwt_token),
     url(r'^api/v1/core/', include('core.urls', namespace='core')),
-    url(r'^api/v1/', include('passwordfolders.urls')),
+    url(r'^api/v1/', include('passwordfolders.urls', namespace='passwordfolder')),
     url(r'^api/v1/', include('passwords.urls')),
 ]

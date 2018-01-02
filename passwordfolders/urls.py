@@ -18,8 +18,10 @@ from rest_framework import routers
 from passwordfolders import views
 
 router = routers.DefaultRouter()
-router.register(r'passwordfolders', views.PasswordFolderViewSet)
-router.register(r'passwordfolderacls', views.PasswordFolderACLViewSet)
+router.register(r'passwordfolders', views.PasswordFolderViewSet, base_name='passwordfolder')
+router.register(r'passwordfolderacls', views.PasswordFolderACLViewSet, base_name='passwordfolderacl')
+
+app_name='passwordfolder'
 
 urlpatterns = [
     url(r'^', include(router.urls)),

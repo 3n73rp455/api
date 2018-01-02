@@ -105,7 +105,8 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-.idea/workspace.xml
+**/.idea/workspace.xml
+**/.idea/tasks.xml
 api/__pycache__/
 core/__pycache__/
 core/migrations/
