@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import force_authenticate, APITestCase, APIClient, APIRequestFactory
 from core.models import User
-from core.views import UserViewSet
+from core.views import UserViewSet, AccessLevelViewSet, OwnerViewSet, SystemSettingViewSet
 
 
 class AuthTests(APITestCase):
@@ -99,7 +99,7 @@ class AccessLevelTests(APITestCase):
     def test_accesslevel_list_superuser(self):
         client = APIRequestFactory()
         user = User.objects.get(username='super')
-        view = UserViewSet.as_view({'get': 'list'})
+        view = AccessLevelViewSet.as_view({'get': 'list'})
         url = reverse('core:accesslevel-list')
         request = client.get(url)
         force_authenticate(request, user=user)
@@ -110,7 +110,7 @@ class AccessLevelTests(APITestCase):
     def test_accesslevel_list_user(self):
         client = APIRequestFactory()
         user = User.objects.get(username='regular')
-        view = UserViewSet.as_view({'get': 'list'})
+        view = AccessLevelViewSet.as_view({'get': 'list'})
         url = reverse('core:accesslevel-list')
         request = client.get(url)
         force_authenticate(request, user=user)
@@ -121,7 +121,7 @@ class AccessLevelTests(APITestCase):
     def test_accesslevel_retrieve_superuser(self):
         factory = APIRequestFactory()
         user = User.objects.get(username='super')
-        view = UserViewSet.as_view({'get': 'retrieve'})
+        view = AccessLevelViewSet.as_view({'get': 'retrieve'})
         url = reverse('core:accesslevel-detail', args=(User.pk,))
         request = factory.get(url)
         force_authenticate(request, user=user)
@@ -132,7 +132,7 @@ class AccessLevelTests(APITestCase):
     def test_accesslevel_retrieve_user(self):
         factory = APIRequestFactory()
         user = User.objects.get(username='regular')
-        view = UserViewSet.as_view({'get': 'retrieve'})
+        view = AccessLevelViewSet.as_view({'get': 'retrieve'})
         url = reverse('core:accesslevel-detail', args=(User.pk,))
         request = factory.get(url)
         force_authenticate(request, user=user)
@@ -151,7 +151,7 @@ class OwnerTests(APITestCase):
     def test_owner_list_superuser(self):
         client = APIRequestFactory()
         user = User.objects.get(username='super')
-        view = UserViewSet.as_view({'get': 'list'})
+        view = OwnerViewSet.as_view({'get': 'list'})
         url = reverse('core:owner-list')
         request = client.get(url)
         force_authenticate(request, user=user)
@@ -162,7 +162,7 @@ class OwnerTests(APITestCase):
     def test_owner_list_user(self):
         client = APIRequestFactory()
         user = User.objects.get(username='regular')
-        view = UserViewSet.as_view({'get': 'list'})
+        view = OwnerViewSet.as_view({'get': 'list'})
         url = reverse('core:owner-list')
         request = client.get(url)
         force_authenticate(request, user=user)
@@ -173,7 +173,7 @@ class OwnerTests(APITestCase):
     def test_owner_retrieve_superuser(self):
         factory = APIRequestFactory()
         user = User.objects.get(username='super')
-        view = UserViewSet.as_view({'get': 'retrieve'})
+        view = OwnerViewSet.as_view({'get': 'retrieve'})
         url = reverse('core:owner-detail', args=(User.pk,))
         request = factory.get(url)
         force_authenticate(request, user=user)
@@ -184,7 +184,7 @@ class OwnerTests(APITestCase):
     def test_owner_retrieve_user(self):
         factory = APIRequestFactory()
         user = User.objects.get(username='regular')
-        view = UserViewSet.as_view({'get': 'retrieve'})
+        view = OwnerViewSet.as_view({'get': 'retrieve'})
         url = reverse('core:owner-detail', args=(User.pk,))
         request = factory.get(url)
         force_authenticate(request, user=user)
@@ -203,7 +203,7 @@ class SystemSettingTests(APITestCase):
     def test_systemsetting_list_superuser(self):
         client = APIRequestFactory()
         user = User.objects.get(username='super')
-        view = UserViewSet.as_view({'get': 'list'})
+        view = SystemSettingViewSet.as_view({'get': 'list'})
         url = reverse('core:systemsetting-list')
         request = client.get(url)
         force_authenticate(request, user=user)
@@ -214,7 +214,7 @@ class SystemSettingTests(APITestCase):
     def test_systemsetting_list_user(self):
         client = APIRequestFactory()
         user = User.objects.get(username='regular')
-        view = UserViewSet.as_view({'get': 'list'})
+        view = SystemSettingViewSet.as_view({'get': 'list'})
         url = reverse('core:systemsetting-list')
         request = client.get(url)
         force_authenticate(request, user=user)
@@ -225,7 +225,7 @@ class SystemSettingTests(APITestCase):
     def test_systemsetting_retrieve_superuser(self):
         factory = APIRequestFactory()
         user = User.objects.get(username='super')
-        view = UserViewSet.as_view({'get': 'retrieve'})
+        view = SystemSettingViewSet.as_view({'get': 'retrieve'})
         url = reverse('core:systemsetting-detail', args=(User.pk,))
         request = factory.get(url)
         force_authenticate(request, user=user)
@@ -236,7 +236,7 @@ class SystemSettingTests(APITestCase):
     def test_systemsetting_retrieve_user(self):
         factory = APIRequestFactory()
         user = User.objects.get(username='regular')
-        view = UserViewSet.as_view({'get': 'retrieve'})
+        view = SystemSettingViewSet.as_view({'get': 'retrieve'})
         url = reverse('core:systemsetting-detail', args=(User.pk,))
         request = factory.get(url)
         force_authenticate(request, user=user)
