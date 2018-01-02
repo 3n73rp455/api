@@ -1,8 +1,8 @@
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import force_authenticate, APITestCase, APIClient, APIRequestFactory
-from core.models import User
-from core.views import UserViewSet, AccessLevelViewSet, OwnerViewSet, SystemSettingViewSet
+from core.models import User, AccessLevel, Owner
+from core.views import UserViewSet, AccessLevelViewSet, OwnerViewSet
 
 
 class AuthTests(APITestCase):
@@ -122,7 +122,7 @@ class AccessLevelTests(APITestCase):
         factory = APIRequestFactory()
         user = User.objects.get(username='super')
         view = AccessLevelViewSet.as_view({'get': 'retrieve'})
-        url = reverse('core:accesslevel-detail', args=(User.pk,))
+        url = reverse('core:accesslevel-detail', args=(AccessLevel.pk,))
         request = factory.get(url)
         force_authenticate(request, user=user)
         response = view(request, pk=1)
@@ -133,7 +133,7 @@ class AccessLevelTests(APITestCase):
         factory = APIRequestFactory()
         user = User.objects.get(username='regular')
         view = AccessLevelViewSet.as_view({'get': 'retrieve'})
-        url = reverse('core:accesslevel-detail', args=(User.pk,))
+        url = reverse('core:accesslevel-detail', args=(AccessLevel.pk,))
         request = factory.get(url)
         force_authenticate(request, user=user)
         response = view(request, pk=1)
@@ -167,14 +167,14 @@ class OwnerTests(APITestCase):
         request = client.get(url)
         force_authenticate(request, user=user)
         response = view(request)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     # Retrieve Owners as Test Superuser
     def test_owner_retrieve_superuser(self):
         factory = APIRequestFactory()
         user = User.objects.get(username='super')
         view = OwnerViewSet.as_view({'get': 'retrieve'})
-        url = reverse('core:owner-detail', args=(User.pk,))
+        url = reverse('core:owner-detail', args=(Owner.pk,))
         request = factory.get(url)
         force_authenticate(request, user=user)
         response = view(request, pk=1)
@@ -185,60 +185,9 @@ class OwnerTests(APITestCase):
         factory = APIRequestFactory()
         user = User.objects.get(username='regular')
         view = OwnerViewSet.as_view({'get': 'retrieve'})
-        url = reverse('core:owner-detail', args=(User.pk,))
-        request = factory.get(url)
-        force_authenticate(request, user=user)
-        response = view(request, pk=1)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-
-class SystemSettingTests(APITestCase):
-    fixtures = ['owner.yaml', 'passwordtype.yaml', 'accesslevel.yaml']
-
-    def setUp(self):
-        User.objects.create_superuser(username='super', password='Welcome2', email='super@user.com')
-        User.objects.create_user(username='regular', password='Welcome2', email='regular@user.com')
-
-    # List System Settings as Test Superuser
-    def test_systemsetting_list_superuser(self):
-        client = APIRequestFactory()
-        user = User.objects.get(username='super')
-        view = SystemSettingViewSet.as_view({'get': 'list'})
-        url = reverse('core:systemsetting-list')
-        request = client.get(url)
-        force_authenticate(request, user=user)
-        response = view(request)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    # List System Settings as Test User
-    def test_systemsetting_list_user(self):
-        client = APIRequestFactory()
-        user = User.objects.get(username='regular')
-        view = SystemSettingViewSet.as_view({'get': 'list'})
-        url = reverse('core:systemsetting-list')
-        request = client.get(url)
-        force_authenticate(request, user=user)
-        response = view(request)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    # Retrieve System Settings as Test Superuser
-    def test_systemsetting_retrieve_superuser(self):
-        factory = APIRequestFactory()
-        user = User.objects.get(username='super')
-        view = SystemSettingViewSet.as_view({'get': 'retrieve'})
-        url = reverse('core:systemsetting-detail', args=(User.pk,))
+        url = reverse('core:owner-detail', args=(Owner.pk,))
         request = factory.get(url)
         force_authenticate(request, user=user)
         response = view(request, pk=1)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    # Retrieve System Settings as Test User
-    def test_systemsetting_retrieve_user(self):
-        factory = APIRequestFactory()
-        user = User.objects.get(username='regular')
-        view = SystemSettingViewSet.as_view({'get': 'retrieve'})
-        url = reverse('core:systemsetting-detail', args=(User.pk,))
-        request = factory.get(url)
-        force_authenticate(request, user=user)
-        response = view(request, pk=1)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

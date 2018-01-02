@@ -1,4 +1,4 @@
-from core.models import User, AccessLevel, Owner, SystemSetting
+from core.models import User, AccessLevel, Owner
 from rest_framework import serializers
 
 
@@ -8,19 +8,13 @@ class UserSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class AccessLevelSerializer(serializers.HyperlinkedModelSerializer):
+class AccessLevelSerializer(serializers.ModelSerializer):
     class Meta:
         model = AccessLevel
         fields = '__all__'
 
 
-class OwnerSerializer(serializers.HyperlinkedModelSerializer):
+class OwnerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Owner
-        fields = '__all__'
-
-
-class SystemSettingSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = SystemSetting
         fields = '__all__'

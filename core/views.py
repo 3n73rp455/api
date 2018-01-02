@@ -19,13 +19,8 @@ from core.permissions import (CanListUser,
                               CanCreateOwner,
                               CanUpdateOwner,
                               CanDestroyOwner,
-                              CanListSystemSetting,
-                              CanRetrieveSystemSetting,
-                              CanCreateSystemSetting,
-                              CanUpdateSystemSetting,
-                              CanDestroySystemSetting,
                               )
-from core.serializers import UserSerializer, AccessLevelSerializer, OwnerSerializer, SystemSettingSerializer
+from core.serializers import UserSerializer, AccessLevelSerializer, OwnerSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -117,6 +112,23 @@ class AccessLevelViewSet(viewsets.ModelViewSet):
                                     'update': [CanUpdateAccessLevel],
                                     'destroy': [CanDestroyAccessLevel]}
 
+    def list(self, request, **kwargs):
+        try:
+            queryset = self.get_queryset()
+        except TypeError:
+            queryset = None
+        serializer = AccessLevelSerializer(queryset, many=True, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def retrieve(self, request, pk=None, **kwargs):
+        try:
+            instance = self.get_object()
+            self.check_object_permissions(self.request, instance)
+            serializer = AccessLevelSerializer(instance, context={'request': request})
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
     def get_permissions(self):
         try:
             # return permission_classes depending on `action`
@@ -135,23 +147,23 @@ class OwnerViewSet(viewsets.ModelViewSet):
                                     'update': [CanUpdateOwner],
                                     'destroy': [CanDestroyOwner]}
 
-    def get_permissions(self):
+    def list(self, request, **kwargs):
         try:
-            # return permission_classes depending on `action`
-            return [permission() for permission in self.permission_classes_by_action[self.action]]
-        except KeyError:
-            # action is not set return default permission_classes
-            return [permission() for permission in self.permission_classes]
+            queryset = self.get_queryset()
+        except TypeError:
+            queryset = None
+        serializer = OwnerSerializer(queryset, many=True, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
+    def retrieve(self, request, pk=None, **kwargs):
+        try:
+            instance = self.get_object()
+            self.check_object_permissions(self.request, instance)
+            serializer = OwnerSerializer(instance, context={'request': request})
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
-class SystemSettingViewSet(viewsets.ModelViewSet):
-    queryset = SystemSetting.objects.all()
-    serializer_class = SystemSettingSerializer
-    permission_classes_by_action = {'list': [CanListSystemSetting],
-                                    'create': [CanCreateSystemSetting],
-                                    'retrieve': [CanRetrieveSystemSetting],
-                                    'update': [CanUpdateSystemSetting],
-                                    'destroy': [CanDestroySystemSetting]}
 
     def get_permissions(self):
         try:
