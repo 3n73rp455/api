@@ -18,19 +18,8 @@ class PasswordFolderTests(APITestCase):
         PasswordFolder.objects.create(name='Personal', description='Personal Folder', owner=owner, parent=None, user=superuser)
         PasswordFolder.objects.create(name='Personal', description='Personal Folder', owner=owner, parent=None, user=user)
 
-    # List Password Folders as Test Superuser
-    def test_passwordfolder_list_superuser(self):
-        client = APIRequestFactory()
-        user = User.objects.get(username='super')
-        view = PasswordFolderViewSet.as_view({'get': 'list'})
-        url = reverse('passwordfolder:passwordfolder-list')
-        request = client.get(url)
-        force_authenticate(request, user=user)
-        response = view(request)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
     # List Password Folders as Test User
-    def test_passwordfolder_list_user(self):
+    def test_passwordfolder_list(self):
         client = APIRequestFactory()
         user = User.objects.get(username='regular')
         view = PasswordFolderViewSet.as_view({'get': 'list'})
@@ -38,26 +27,64 @@ class PasswordFolderTests(APITestCase):
         request = client.get(url)
         force_authenticate(request, user=user)
         response = view(request)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    # Retrieve Password Folder as Test Superuser
-    def test_passwordfolder_retrieve_superuser(self):
-        factory = APIRequestFactory()
-        user = User.objects.get(username='super')
-        view = PasswordFolderViewSet.as_view({'get': 'retrieve'})
-        url = reverse('passwordfolder:passwordfolder-detail', args=(User.pk,))
-        request = factory.get(url)
-        force_authenticate(request, user=user)
-        response = view(request, pk=1)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     # Retrieve Password Folder as Test User
-    def test_passwordfolder_retrieve_user(self):
+    def test_passwordfolder_detail(self):
         factory = APIRequestFactory()
         user = User.objects.get(username='regular')
         view = PasswordFolderViewSet.as_view({'get': 'retrieve'})
-        url = reverse('passwordfolder:passwordfolder-detail', args=(User.pk,))
+        url = reverse('passwordfolder:passwordfolder-detail', args=(PasswordFolder.pk,))
         request = factory.get(url)
         force_authenticate(request, user=user)
-        response = view(request, pk=1)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        response = view(request, pk=2)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    # Create Password Folder as Test User
+    def test_passwordfolder_private_create(self):
+        factory = APIRequestFactory()
+        user = User.objects.get(username='regular')
+        view = PasswordFolderViewSet.as_view({'post': 'create'})
+        url = reverse('passwordfolder:passwordfolder-list')
+        data = {
+            'name': 'Test Folder',
+            'description': 'Test User Folder Addition',
+            'owner': '2',
+            'personal': 'True',
+            'parent': '',
+            'tags': []
+        }
+        request = factory.post(url, data)
+        force_authenticate(request, user=user)
+        response = view(request)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    # Patch Password Folder as Test User
+    def test_passwordfolder_private_patch(self):
+        factory = APIRequestFactory()
+        user = User.objects.get(username='regular')
+        view = PasswordFolderViewSet.as_view({'post': 'partial_update'})
+        url = reverse('passwordfolder:passwordfolder-detail', args=(PasswordFolder.pk,))
+        data = {
+            'name': 'Test Folder',
+            'description': 'Test User Folder Patch',
+            'owner': '2',
+            'personal': 'True',
+            'parent': '',
+            'tags': []
+        }
+        request = factory.post(url, data)
+        force_authenticate(request, user=user)
+        response = view(request, pk=2)
+        self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
+
+    # Patch Password Folder as Test User
+    def test_passwordfolder_private_destroy(self):
+        factory = APIRequestFactory()
+        user = User.objects.get(username='regular')
+        view = PasswordFolderViewSet.as_view({'post': 'destroy'})
+        url = reverse('passwordfolder:passwordfolder-detail', args=(PasswordFolder.pk,))
+        request = factory.post(url)
+        force_authenticate(request, user=user)
+        response = view(request, pk=2)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

@@ -76,8 +76,14 @@ class CanUpdatePasswordFolder(permissions.DjangoObjectPermissions):
             return True
 
     def has_object_permission(self, request, view, obj):
-        level = get_permission_level(request, obj).level.name
-        if level in ['Owner', 'Admin']:
+        try:
+            level = get_permission_level(request, obj).level.name
+        except AttributeError:
+            if PasswordFolder.objects.get(pk=obj.id, user=request.user, personal=True):
+                level = 'Personal'
+            else:
+                return False
+        if level in ['Owner', 'Admin', 'Personal']:
             return True
         else:
             return False
@@ -94,8 +100,11 @@ class CanDestroyPasswordFolder(permissions.DjangoObjectPermissions):
         try:
             level = get_permission_level(request, obj).level.name
         except AttributeError:
-            return False
-        if level in ['Owner']:
+            if PasswordFolder.objects.get(pk=obj.id, user=request.user, personal=True):
+                level = 'Personal'
+            else:
+                return False
+        if level in ['Owner', 'Personal']:
             return True
         else:
             return False
