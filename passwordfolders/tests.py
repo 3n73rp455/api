@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import force_authenticate, APITestCase, APIClient, APIRequestFactory
 from core.models import User, Owner
-from passwordfolders.models import PasswordFolder
+from passwordfolders.models import PasswordFolder, PasswordFolderACL
 from passwordfolders.views import PasswordFolderViewSet
 
 
@@ -14,9 +14,11 @@ class PasswordFolderTests(APITestCase):
         User.objects.create_user(username='regular', password='Welcome2', email='regular@user.com')
         superuser = User.objects.get(username='super')
         user = User.objects.get(username='regular')
-        owner = Owner.objects.get(name='Personal')
-        PasswordFolder.objects.create(name='Personal', description='Personal Folder', owner=owner, parent=None, user=superuser)
-        PasswordFolder.objects.create(name='Personal', description='Personal Folder', owner=owner, parent=None, user=user)
+        personal = Owner.objects.get(name='Personal')
+        shared = Owner.objects.get(name='Default')
+        PasswordFolder.objects.create(name='Personal', description='Personal Folder', owner=personal, parent=None, user=superuser)
+        PasswordFolder.objects.create(name='Personal', description='Personal Folder', owner=personal, parent=None, user=user)
+        PasswordFolder.objects.create(name='Shared', description='Shared Folder', owner=shared, parent=None, user=user)
 
     # List Password Folders as Test User
     def test_passwordfolder_list(self):
@@ -59,6 +61,26 @@ class PasswordFolderTests(APITestCase):
         response = view(request)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_passwordfolder_shared_create(self):
+        factory = APIRequestFactory()
+        user = User.objects.get(username='regular')
+        view = PasswordFolderViewSet.as_view({'post': 'create'})
+        url = reverse('passwordfolder:passwordfolder-list')
+        data = {
+            'name': 'Test Folder',
+            'description': 'Test User Folder Addition',
+            'owner': '1',
+            'personal': 'False',
+            'parent': '',
+            'tags': []
+        }
+        request = factory.post(url, data)
+        force_authenticate(request, user=user)
+        response = view(request)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(PasswordFolderACL.objects.count(), 1)
+
+
     # Patch Password Folder as Test User
     def test_passwordfolder_private_patch(self):
         factory = APIRequestFactory()
@@ -78,7 +100,7 @@ class PasswordFolderTests(APITestCase):
         response = view(request, pk=2)
         self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
 
-    # Patch Password Folder as Test User
+    # Destroy Password Folder as Test User
     def test_passwordfolder_private_destroy(self):
         factory = APIRequestFactory()
         user = User.objects.get(username='regular')

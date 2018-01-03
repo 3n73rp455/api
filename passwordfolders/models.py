@@ -9,7 +9,7 @@ class PasswordFolder(MPTTModel):
     description = models.CharField(max_length=1024)
     owner = models.ForeignKey('core.Owner', null=False, blank=False, default=1, on_delete=models.PROTECT)
     personal = models.BooleanField(null=False, blank=False, default=False)
-    user = models.ForeignKey('core.User', null=False, blank=False, default=None, on_delete=models.PROTECT)
+    user = models.ForeignKey('core.User', null=True, blank=False, default=None, on_delete=models.PROTECT)
     parent = TreeForeignKey('self', null=True, blank=False, related_name='children', db_index=True, on_delete=models.DO_NOTHING)
     tags = TaggableManager(blank=True)
     created = models.DateTimeField(auto_now_add=True, blank=False)
