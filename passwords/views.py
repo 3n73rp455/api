@@ -1,3 +1,4 @@
+from django.db.models import Q, FieldDoesNotExist
 from django.http import Http404
 from cryptography.fernet import InvalidToken
 from rest_framework import status, viewsets
@@ -97,12 +98,13 @@ class PasswordViewSet(viewsets.ModelViewSet):
                                     'update': [CanUpdatePassword, IsAuthenticated],
                                     'destroy': [CanDestroyPassword, IsAuthenticated]}
 
-    def list(self, request):
+    def list(self, request, **kwargs):
         try:
-            queryset = self.get_queryset().filter(folder_id__passwordfolderacl__user=request.user)
+            queryset = self.get_queryset().filter(Q(folder_id__passwordfolderacl__user=request.user) |
+                                                  Q(folder__user=request.user, folder__personal=True))
             serializer = PasswordSerializer(queryset, many=True, context={'request': request})
         except:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, **kwargs):

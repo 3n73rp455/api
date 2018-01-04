@@ -1,8 +1,9 @@
+from django.db.models import Q
 from rest_framework import permissions
 from core.models import AccessLevel
 from core.permissions import is_application, is_servicedesk, is_superuser, is_support
 from passwords.models import Password
-from passwordfolders.models import PasswordFolderACL
+from passwordfolders.models import PasswordFolderACL, PasswordFolder
 
 
 # Password Permission per Object based on folder ACL

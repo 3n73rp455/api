@@ -103,7 +103,6 @@ class PasswordFolderViewSet(viewsets.ModelViewSet):
 
     def create(self, request, **kwargs):
         serializer = PasswordFolderSerializer(data=request.data, context={'request': request})
-
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -135,10 +134,10 @@ class PasswordFolderViewSet(viewsets.ModelViewSet):
             instance = self.get_object()
             acl_instances = PasswordFolderACL.objects.filter(folder=pk)
             self.check_object_permissions(self.request, instance)
-            self.perform_destroy(instance)
             # destroy all associated ACL objects
             for i in acl_instances:
                 self.perform_destroy(i)
+            self.perform_destroy(instance)
         except Http404:
             pass
         return Response(status=status.HTTP_204_NO_CONTENT)

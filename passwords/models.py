@@ -18,9 +18,8 @@ class PasswordType(models.Model):
 
 
 class Password(models.Model):
-    title = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
     description = models.CharField(max_length=1024)
-    owner = models.ForeignKey(Owner, null=False, blank=False, default=1, on_delete=models.PROTECT)
     type = models.ForeignKey(PasswordType, null=True, on_delete=models.PROTECT)
     username = models.CharField(max_length=50)
     password = models.CharField(max_length=1024)
@@ -35,7 +34,7 @@ class Password(models.Model):
         managed = True
 
     def __str__(self):
-        return self.title
+        return self.name
 
 
 class PasswordACL(models.Model):

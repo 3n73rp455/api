@@ -115,4 +115,4 @@ passwordfolders/__pycache__/
 passwordfolders/migrations/
 passwords/__pycache__/
 passwords/migrations/
-logs/
+/logs/

@@ -5,7 +5,7 @@ from core.models import User, AccessLevel, Owner
 from core.views import UserViewSet, AccessLevelViewSet, OwnerViewSet
 
 
-class AuthTests(APITestCase):
+class AuthAPITestCase(APITestCase):
     fixtures = ['owner.yaml', 'passwordtype.yaml', 'accesslevel.yaml']
 
     # Register Test User
@@ -36,7 +36,7 @@ class AuthTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
-class UserTests(APITestCase):
+class UserAPITestCase(APITestCase):
     fixtures = ['owner.yaml', 'passwordtype.yaml', 'accesslevel.yaml']
 
     def setUp(self):
@@ -88,7 +88,7 @@ class UserTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
-class AccessLevelTests(APITestCase):
+class AccessLevelAPITestCase(APITestCase):
     fixtures = ['owner.yaml', 'passwordtype.yaml', 'accesslevel.yaml']
 
     def setUp(self):
@@ -140,7 +140,7 @@ class AccessLevelTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
-class OwnerTests(APITestCase):
+class OwnerAPITestCase(APITestCase):
     fixtures = ['owner.yaml', 'passwordtype.yaml', 'accesslevel.yaml']
 
     def setUp(self):

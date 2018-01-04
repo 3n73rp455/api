@@ -18,9 +18,11 @@ from rest_framework import routers
 from passwords import views
 
 router = routers.DefaultRouter()
-router.register(r'passwords', views.PasswordViewSet)
-router.register(r'passwordacls', views.PasswordACLViewSet)
-router.register(r'passwordtypes', views.PasswordTypeViewSet)
+router.register(r'passwords', views.PasswordViewSet, base_name='password')
+router.register(r'passwordacls', views.PasswordACLViewSet, base_name='passwordacl')
+router.register(r'passwordtypes', views.PasswordTypeViewSet, base_name='passwordtype')
+
+app_name='password'
 
 urlpatterns = [
     url(r'^', include(router.urls)),

@@ -21,6 +21,9 @@ def create_personal_list(sender, instance=None, created=False, **kwargs):
                                       personal=True,
                                       user=instance,
                                       parent=None)
+        PasswordFolderACL.objects.create(user=instance,
+                                         folder=PasswordFolder.objects.get(user=instance),
+                                         level=AccessLevel.objects.get(name='Owner'))
 
 
 class User(AbstractBaseUser, PermissionsMixin):

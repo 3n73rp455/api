@@ -43,16 +43,11 @@ class PasswordACLSerializer(ModelSerializer):
 
 
 class PasswordSerializer( ModelSerializer, TaggitSerializer):
-    folder = SlugRelatedField(
-        queryset=PasswordFolder.objects.all(),
-        slug_field='name',
-        default='Personal'
-    )
     tags = TagListSerializerField()
 
     class Meta:
         model = Password
-        fields = ('id', 'type', 'title', 'description', 'url', 'username', 'password', 'folder', 'tags', 'created',
+        fields = ('id', 'type', 'name', 'description', 'url', 'username', 'password', 'folder', 'tags', 'created',
                   'modified')
 
     def create(self, validated_data):
@@ -68,7 +63,7 @@ class PasswordSerializer( ModelSerializer, TaggitSerializer):
         password = encrypt_password(generate_masterkey('28beatty'),
                                                    generate_personalkey(user.uuid, user.password),
                                                    validated_data.get('password', instance.password))
-        instance.title = validated_data.get('title', instance.title)
+        instance.name = validated_data.get('name', instance.name)
         instance.description = validated_data.get('description', instance.description)
         instance.url = validated_data.get('url', instance.url)
         instance.username = validated_data.get('username', instance.username)

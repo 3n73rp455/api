@@ -6,7 +6,7 @@ from passwordfolders.models import PasswordFolder, PasswordFolderACL
 from passwordfolders.views import PasswordFolderViewSet
 
 
-class PasswordFolderTests(APITestCase):
+class PasswordFolderAPITestCase(APITestCase):
     fixtures = ['owner.yaml', 'passwordtype.yaml', 'accesslevel.yaml']
 
     def setUp(self):
@@ -16,8 +16,6 @@ class PasswordFolderTests(APITestCase):
         user = User.objects.get(username='regular')
         personal = Owner.objects.get(name='Personal')
         shared = Owner.objects.get(name='Default')
-        PasswordFolder.objects.create(name='Personal', description='Personal Folder', owner=personal, parent=None, user=superuser)
-        PasswordFolder.objects.create(name='Personal', description='Personal Folder', owner=personal, parent=None, user=user)
         PasswordFolder.objects.create(name='Shared', description='Shared Folder', owner=shared, parent=None, user=user)
 
     # List Password Folders as Test User
@@ -78,7 +76,7 @@ class PasswordFolderTests(APITestCase):
         force_authenticate(request, user=user)
         response = view(request)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(PasswordFolderACL.objects.count(), 1)
+        self.assertEqual(PasswordFolderACL.objects.count(), 3)
 
 
     # Patch Password Folder as Test User
