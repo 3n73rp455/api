@@ -57,7 +57,7 @@ class PasswordFolderAPITestCase(APITestCase):
         request = factory.post(url, data)
         force_authenticate(request, user=user)
         response = view(request)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_passwordfolder_shared_create(self):
         factory = APIRequestFactory()
@@ -75,7 +75,7 @@ class PasswordFolderAPITestCase(APITestCase):
         request = factory.post(url, data)
         force_authenticate(request, user=user)
         response = view(request)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(PasswordFolderACL.objects.count(), 3)
 
 

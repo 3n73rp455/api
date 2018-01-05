@@ -127,7 +127,7 @@ class PasswordViewSet(viewsets.ModelViewSet):
         except (Http404, InvalidToken, TypeError):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-    def update(self, request, pk=None):
+    def partial_update(self, request, pk=None):
         try:
             instance = self.get_object()
             self.check_object_permissions(self.request, instance)

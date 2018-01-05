@@ -99,7 +99,6 @@ class CanDestroyPassword(permissions.DjangoObjectPermissions):
             return False
         else:
             level = AccessLevel.objects.get(pk=get_permission_level(request, obj).level_id).name
-            print(level)
             if level in access_levels:
                 return True
             else:

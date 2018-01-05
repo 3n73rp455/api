@@ -75,3 +75,56 @@ class PasswordAPITestCase(APITestCase):
         force_authenticate(request, user=user)
         response = view(request, pk=2)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_password_create(self):
+        factory = APIRequestFactory()
+        user = User.objects.get(username='regular')
+        view = PasswordViewSet.as_view({'post': 'create'})
+        url = reverse('password:password-list')
+        data = {
+            'name': 'Test Password',
+            'description': 'Test Password Addition',
+            'type': '1',
+            'username': 'test_create',
+            'password': '123456',
+            'url': 'http://create.com',
+            'folder': '2',
+            'tags': []
+        }
+        request = factory.post(url, data)
+        force_authenticate(request, user=user)
+        response = view(request)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Password.objects.count(), 3)
+
+    # Patch Password as Test User
+    def test_password_patch(self):
+        factory = APIRequestFactory()
+        user = User.objects.get(username='regular')
+        view = PasswordViewSet.as_view({'post': 'partial_update'})
+        url = reverse('password:password-detail', args=(Password.pk,))
+        data = {
+            'name': 'Test Password',
+            'description': 'Test Password Addition',
+            'type': '1',
+            'username': 'test_create',
+            'password': '123456',
+            'url': 'http://create.com',
+            'folder': '2',
+            'tags': []
+        }
+        request = factory.post(url, data)
+        force_authenticate(request, user=user)
+        response = view(request, pk=1)
+        self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
+
+    # Destroy Password as Test User
+    def test_password_destroy(self):
+        factory = APIRequestFactory()
+        user = User.objects.get(username='regular')
+        view = PasswordViewSet.as_view({'post': 'destroy'})
+        url = reverse('password:password-detail', args=(Password.pk,))
+        request = factory.post(url)
+        force_authenticate(request, user=user)
+        response = view(request, pk=1)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
