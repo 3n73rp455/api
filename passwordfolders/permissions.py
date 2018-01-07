@@ -117,12 +117,12 @@ class CanCreatePasswordFolderACL(permissions.DjangoObjectPermissions):
             return False
         else:
             for r in request.data:
-                folder_name = request.data['folder']
-                folder_type = PasswordFolder.objects.get(name=folder_name)
+                folder_id = request.data['folder']
+                folder_type = PasswordFolder.objects.get(pk=folder_id)
                 if folder_type.personal is True:
                     return False
                 else:
-                    folder_level = PasswordFolderACL.objects.get(folder__name=folder_name, user=request.user)
+                    folder_level = PasswordFolderACL.objects.get(folder__pk=folder_id, user=request.user)
                     if folder_level.level.name in ['Owner', 'Admin']:
                         return True
                     else:

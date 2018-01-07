@@ -60,6 +60,18 @@ class PasswordFolderACLViewSet(viewsets.ModelViewSet):
         except Http404:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
+    def update(self, request, pk=None, **kwargs):
+        try:
+            instance = self.get_object()
+            self.check_object_permissions(self.request, instance)
+            serializer = PasswordFolderACLSerializer(instance, data=request.data, context={'request': request})
+        except Http404:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
+
     def destroy(self, request, pk=None, **kwargs):
         try:
             instance = self.get_object()

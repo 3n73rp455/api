@@ -6,18 +6,6 @@ from taggit_serializer.serializers import TagListSerializerField, TaggitSerializ
 
 
 class PasswordFolderACLSerializer(ModelSerializer):
-    user = SlugRelatedField(
-        slug_field='username',
-        queryset=User.objects.all(),
-        allow_null=False)
-    folder = SlugRelatedField(
-        slug_field='name',
-        queryset=PasswordFolder.objects.all(),
-        allow_null=False)
-    level = SlugRelatedField(
-        slug_field='name',
-        queryset=AccessLevel.objects.all(),
-        allow_null=False)
 
     class Meta:
         model = PasswordFolderACL
@@ -46,11 +34,6 @@ class PasswordFolderACLSerializer(ModelSerializer):
 
 
 class PasswordFolderSerializer(TaggitSerializer, ModelSerializer):
-    parent = SlugRelatedField(
-        slug_field='name',
-        queryset=PasswordFolder.objects.all(),
-        allow_null=True,
-        default='root')
     tags = TagListSerializerField()
 
     def create(self, validated_data):
