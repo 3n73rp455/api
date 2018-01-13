@@ -61,14 +61,14 @@ class PasswordFolderAPITestCase(APITestCase):
         self.assertEqual(PasswordFolderACL.objects.count(), 3)
 
     # Patch Password Folder as Test User
-    def test_passwordfolder_private_patch(self):
+    def test_passwordfolder_private_put(self):
         factory = APIRequestFactory()
         user = User.objects.get(username='regular')
-        view = PasswordFolderViewSet.as_view({'post': 'partial_update'})
+        view = PasswordFolderViewSet.as_view({'post': 'update'})
         url = reverse('passwordfolder:passwordfolder-detail', args=(PasswordFolder.pk,))
         data = {
             'name': 'Test Folder',
-            'description': 'Test User Folder Patch',
+            'description': 'Test User Folder Put',
             'owner': '2',
             'personal': 'True',
             'parent': '',
@@ -144,13 +144,13 @@ class PasswordFolderACLAPITestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     # Patch Password Folder ACL as Test User
-    def test_passwordfolderacl_patch(self):
+    def test_passwordfolderacl_put(self):
         user = User.objects.get(username='regular')
         folder = PasswordFolder.objects.get(name='Shared')
         level = AccessLevel.objects.get(name='Admin')
         PasswordFolderACL.objects.create(user=user, folder=folder, level=level)
         factory = APIRequestFactory()
-        view = PasswordFolderACLViewSet.as_view({'post': 'partial_update'})
+        view = PasswordFolderACLViewSet.as_view({'post': 'update'})
         url = reverse('passwordfolder:passwordfolderacl-detail', args=(PasswordFolderACL.pk,))
         data = {
             'user': 2,

@@ -60,18 +60,6 @@ class UserViewSet(viewsets.ModelViewSet):
         except User.DoesNotExist:
             return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def partial_update(self, request, pk=None, **kwargs):
-        try:
-            instance = self.get_object()
-            self.check_object_permissions(self.request, instance)
-            serializer = UserSerializer(instance, data=request.data, context={'request': request})
-        except Http404:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
-
     def update(self, request, pk=None, **kwargs):
         try:
             password = make_password(request.data['password'])
