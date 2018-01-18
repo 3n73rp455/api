@@ -137,7 +137,7 @@ class PasswordACLViewSet(viewsets.ModelViewSet):
             serializer = PasswordACLSerializer(instance, context={'request': request})
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
     def destroy(self, request, pk=None, **kwargs):
         try:

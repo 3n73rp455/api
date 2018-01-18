@@ -4,7 +4,7 @@ from rest_framework.test import force_authenticate, APITestCase, APIClient, APIR
 from core.models import User, Owner, AccessLevel
 from passwordfolders.models import PasswordFolder, PasswordFolderACL
 from passwords.models import Password, PasswordACL, PasswordType
-from passwords.views import PasswordViewSet
+from passwords.views import PasswordViewSet, PasswordACLViewSet
 
 
 class PasswordAPITestCase(APITestCase):
@@ -134,7 +134,9 @@ class PasswordACLAPITestCase(APITestCase):
 
     def setUp(self):
         User.objects.create_user(username='regular', password='Welcome2', email='regular@user.com')
+        User.objects.create_user(username='service', password='abc123', email='service@user.com')
         user = User.objects.get(username='regular')
+        service = User.objects.get(username='service')
         shared = Owner.objects.get(name='Default')
         password_type = PasswordType.objects.get(name='Web')
         PasswordFolder.objects.create(name='Shared',
@@ -159,18 +161,75 @@ class PasswordACLAPITestCase(APITestCase):
                                 password='123456',
                                 url='http://test.com',
                                 folder=shared_folder)
+        password = Password.objects.get(name='Test Shared')
         PasswordFolderACL.objects.create(user=user,
                                          folder=shared_folder,
                                          level=owner_level)
+        PasswordACL.objects.create(user=service, password=password, api=True)
 
-    # List Password Folders as Test User
+    # List Password ACL as Test User
     def test_passwordacl_list(self):
         client = APIRequestFactory()
         user = User.objects.get(username='regular')
-        view = PasswordViewSet.as_view({'get': 'list'})
+        view = PasswordACLViewSet.as_view({'get': 'list'})
         url = reverse('password:passwordacl-list')
         request = client.get(url)
         force_authenticate(request, user=user)
         response = view(request)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(PasswordACL.objects.count(), 0)
+        self.assertEqual(PasswordACL.objects.count(), 1)
+
+    # Retrieve Password ACL as Test User
+    def test_passwordacl_detail(self):
+        factory = APIRequestFactory()
+        user = User.objects.get(username='regular')
+        view = PasswordACLViewSet.as_view({'get': 'retrieve'})
+        url = reverse('password:passwordacl-detail', args=(PasswordACL.pk,))
+        request = factory.get(url)
+        force_authenticate(request, user=user)
+        response = view(request, pk=1)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    # Create Password ACL as Test User
+    def test_passwordacl_create(self):
+        factory = APIRequestFactory()
+        user = User.objects.get(username='regular')
+        view = PasswordACLViewSet.as_view({'post': 'create'})
+        url = reverse('password:passwordacl-list')
+        data = {
+            'user': '1',
+            'password': '1',
+            'api': 'True'
+        }
+        request = factory.post(url, data)
+        force_authenticate(request, user=user)
+        response = view(request)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(PasswordACL.objects.count(), 2)
+
+        # Put Password ACL as Test User
+    def test_passwordacl_put(self):
+        factory = APIRequestFactory()
+        user = User.objects.get(username='regular')
+        view = PasswordACLViewSet.as_view({'post': 'update'})
+        url = reverse('password:passwordacl-detail', args=(PasswordACL.pk,))
+        data = {
+            'user': '1',
+            'password': '1',
+            'api': 'True'
+        }
+        request = factory.post(url, data)
+        force_authenticate(request, user=user)
+        response = view(request, pk=1)
+        self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
+
+        # Destroy Password as Test User
+    def test_passwordacl_destroy(self):
+        factory = APIRequestFactory()
+        user = User.objects.get(username='regular')
+        view = PasswordACLViewSet.as_view({'post': 'destroy'})
+        url = reverse('password:passwordacl-detail', args=(PasswordACL.pk,))
+        request = factory.post(url)
+        force_authenticate(request, user=user)
+        response = view(request, pk=1)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

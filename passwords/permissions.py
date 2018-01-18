@@ -2,7 +2,7 @@ from django.db.models import Q
 from rest_framework import permissions
 from core.models import AccessLevel
 from core.permissions import is_application, is_servicedesk, is_superuser, is_support
-from passwords.models import Password
+from passwords.models import Password, PasswordACL
 from passwordfolders.models import PasswordFolderACL, PasswordFolder
 
 
@@ -14,6 +14,10 @@ def get_permission_level(request, obj):
     else:
         try:
             level = PasswordFolderACL.objects.get(folder=obj.folder, user=request.user)
+        except AttributeError:
+            acl = PasswordACL.objects.get(pk=obj.id)
+            password = Password.objects.get(pk=acl.password.pk)
+            level = PasswordFolderACL.objects.get(folder=password.folder, user=request.user)
         except:
             level = None
         return level
@@ -121,21 +125,13 @@ class CanCreatePasswordACL(permissions.DjangoObjectPermissions):
         if request.user is None:
             return False
         else:
-            for r in request.data:
-                password_name = request.data['password']
-                folder_name = request.data['folder']
-                passwords_list = []
-                for p in Password.objects.filter(folder__name=folder_name):
-                    passwords_list.append()
-                if password_name in passwords_list:
-                    folder_level = PasswordFolderACL.objects.get(folder__name=folder_name, user=request.user)
-                    if folder_level.level.name in ['Owner', 'Admin']:
-                        return True
-                    else:
-                        return False
-                else:
-                    return False
-            return True
+            password = request.data['password']
+            folder = PasswordFolder.objects.get(pk=password)
+            folder_level = PasswordFolderACL.objects.get(folder=folder, user=request.user)
+            if folder_level.level.name in ['Owner', 'Admin']:
+                return True
+            else:
+                return False
 
 
 class CanRetrievePasswordACL(permissions.DjangoObjectPermissions):
@@ -152,6 +148,7 @@ class CanRetrievePasswordACL(permissions.DjangoObjectPermissions):
             return False
         else:
             level = AccessLevel.objects.get(pk=get_permission_level(request, obj).level_id).name
+            print('test')
             if level in access_levels:
                 return True
             else:
