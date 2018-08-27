@@ -8,4 +8,4 @@ django-allauth==0.34.0
 django-mptt==0.9.0
 django-taggit==0.22.2
 django-taggit-serializer==0.1.5
-cryptography==2.1.4
+cryptography==2.3.1
